@@ -9,9 +9,9 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
 from aiogram.utils.markdown import hbold
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from recsys.infer import get_movie
+#from recsys.infer import get_movie
 
-TOKEN = 'Token'
+TOKEN = '6899841169:AAHfbiQQR_kOtiLEBqtzX-HbnPhizp5myME'  # TODO унести отсюда
 
 dp = Dispatcher()
 
@@ -42,7 +42,7 @@ async def command_start_handler(message: types.Message) -> None:
     """This handler receives request to show next movie"""
 
     if message.from_user.id not in user_data:
-        user_data[message.from_user.id] = get_movie()
+        user_data[message.from_user.id] = [1,2,3]
     movie = next(user_data[message.from_user.id], None)
     print(movie)
     if movie:

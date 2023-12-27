@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+
+  init_db:
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+    depends_on:
+      - postgres
+
+  bot:
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+
+  recsys-service:
+    build:
+      context: .
+      dockerfile: recsys/Dockerfile
+    ports:
+      - "8000:8000"

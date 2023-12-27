@@ -15,4 +15,3 @@ def get_movie():
     for pred in preds:
         item = items[items['item_id'] == pred]
         yield item.to_dict('records')[0]
-
