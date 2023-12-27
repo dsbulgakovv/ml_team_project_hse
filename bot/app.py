@@ -2,14 +2,16 @@ import asyncio
 import logging
 import sys
 
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, types, F, Router
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from aiogram.utils.markdown import hbold
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-#from recsys.infer import get_movie
+from utils.db import check_user
+from handlers import user_info
+from handlers.user_info import User, age
 
 TOKEN = '6899841169:AAHfbiQQR_kOtiLEBqtzX-HbnPhizp5myME'  # TODO унести отсюда
 
@@ -18,6 +20,8 @@ dp = Dispatcher()
 markup_text = "<b>Фильм:</b> {}\n\nГод выпуска: {}\n\nЖанры: {}\n\n\n{}"
 
 user_data = {}
+
+router = Router()
 
 
 class Form(StatesGroup):
@@ -29,12 +33,12 @@ async def command_start_handler(message: types.Message, state: FSMContext) -> No
     """This handler receives messages with `/start` command"""
 
     await message.answer(f"Привет, {hbold(message.from_user.full_name)}!")
-
-    buttons = [[KeyboardButton(text="Посоветуй фильм"), KeyboardButton(text="Остановитесь")]]
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
-
-    await state.set_state(Form.movie_choice)
-    await message.answer("Выберите функцию:", reply_markup=keyboard)
+    new_user = check_user(message.from_user.id)
+    if new_user:
+        buttons = [[KeyboardButton(text="Да"), KeyboardButton(text="Почему бы и нет")]]
+        keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
+        await message.answer("Поделитесь данными о себе", reply_markup=keyboard)
+        await state.set_state(User.age)
 
 
 @dp.message(Form.movie_choice, F.text.casefold() == "посоветуй фильм")
@@ -42,7 +46,7 @@ async def command_start_handler(message: types.Message) -> None:
     """This handler receives request to show next movie"""
 
     if message.from_user.id not in user_data:
-        user_data[message.from_user.id] = [1,2,3]
+        user_data[message.from_user.id] = [1, 2, 3]
     movie = next(user_data[message.from_user.id], None)
     print(movie)
     if movie:
@@ -61,17 +65,18 @@ async def command_start_handler(message: types.Message, state: FSMContext) -> No
     await message.answer('Ок, заканчиваю', reply_markup=ReplyKeyboardRemove())
 
 
-@dp.message()
-async def echo_handler(message: types.Message) -> None:
-    """ Forward received message back to the sender"""
-    try:
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        await message.answer("Nice try!")
+#@dp.message()
+#async def echo_handler(message: types.Message) -> None:
+#    """ Forward received message back to the sender"""
+#    try:
+#        await message.send_copy(chat_id=message.chat.id)
+#    except TypeError:
+#        await message.answer("Nice try!")
 
 
 async def main() -> None:
 
+    dp.include_routers(user_info.router)
     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
     await dp.start_polling(bot)

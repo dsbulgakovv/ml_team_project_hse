@@ -4,5 +4,5 @@ CREATE TABLE users (
 	age VARCHAR (10),
 	income VARCHAR (20),
 	sex VARCHAR (1),
-	kids_flg INTEGER,
+	kids_flg INTEGER
 );
