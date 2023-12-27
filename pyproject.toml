@@ -20,6 +20,7 @@ grpcio-tools = "^1.60.0"
 uvicorn = "^0.25.0"
 psycopg2-binary = "^2.9.9"
 psycopg2 = "^2.9.9"
+sqlalchemy = "^2.0.23"
 
 
 [tool.poetry.group.dev.dependencies]
