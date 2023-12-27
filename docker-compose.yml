@@ -9,12 +9,17 @@ services:
       POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
+    volumes:
+      - ./db/create_db.sql:/docker-entrypoint-initdb.d/init.sql
+
 
   init_db:
     build:
       context: .
       dockerfile: db/Dockerfile
     depends_on:
+      - postgres
+    links:
       - postgres
 
   bot:

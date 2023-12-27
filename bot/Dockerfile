@@ -12,6 +12,4 @@ RUN poetry install --no-interaction --no-ansi
 
 COPY ./bot /app/
 
-RUN ls -a
-
 CMD ["python", "app.py"]
