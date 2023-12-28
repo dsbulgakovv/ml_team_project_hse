@@ -19,6 +19,7 @@ uvicorn = "^0.25.0"
 psycopg2-binary = "^2.9.9"
 psycopg2 = "^2.9.9"
 sqlalchemy = "^2.0.23"
+pre-commit = "^3.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -27,3 +28,20 @@ jupyter = "^1.0.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 90
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 90
+lines_after_imports = 2
+
+[tool.flake8]
+max-line-length = 120
+
+[tool.nbqa.config]
+black = "pyproject.toml"
+isort = "pyproject.toml"
+flake8 = "setup.cfg"
