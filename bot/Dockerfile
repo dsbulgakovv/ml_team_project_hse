@@ -10,6 +10,7 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock /app/
 RUN poetry install --no-interaction --no-ansi
 
+
 COPY ./bot /app/
 
 CMD ["python", "app.py"]
