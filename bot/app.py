@@ -2,19 +2,20 @@ import asyncio
 import logging
 import sys
 
-from aiogram import Bot, Dispatcher, types, F, Router
+from aiogram import Bot, Dispatcher, F, Router, types
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart, StateFilter
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
-from aiogram.utils.markdown import hbold
-from aiogram.fsm.state import State, StatesGroup
+from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from utils.db import check_user, is_user_filled
-from handlers import user_info, recommendations
-from handlers.user_info import User
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.utils.markdown import hbold
+from handlers import recommendations, user_info
 from handlers.recommendations import Recommendation
+from handlers.user_info import User
+from utils.db import check_user, is_user_filled
 
-TOKEN = '6899841169:AAHfbiQQR_kOtiLEBqtzX-HbnPhizp5myME'  # TODO унести отсюда
+
+TOKEN = "token"  # TODO унести отсюда
 
 dp = Dispatcher()
 
@@ -40,13 +41,15 @@ async def command_start_handler(message: types.Message, state: FSMContext) -> No
         await state.set_state(User.age)
     else:
         await state.set_state(Recommendation.popular)
-        keyboard = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Поехали")]], resize_keyboard=True)
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Поехали")]], resize_keyboard=True
+        )
         await message.answer("Посоветовать фильм?", reply_markup=keyboard)
 
 
 @dp.message(F.text.casefold() == "поехали")
-async def command_start_handler(message: types.Message, state: FSMContext) -> None:
-    """Проверяем заполнены ли у пользователя данные в БД и от этого решаем что покказать"""
+async def start_recommendations(message: types.Message, state: FSMContext) -> None:
+    """Проверяем заполнены ли у пользователя данные в БД и от этого решаем что показать"""
 
     filled = is_user_filled(message.from_user.id)
     if filled:
