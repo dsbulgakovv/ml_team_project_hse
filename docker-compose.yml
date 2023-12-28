@@ -11,6 +11,8 @@ services:
       - "5432:5432"
     volumes:
       - ./db/create_db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pg-network
 
 
   init_db:
@@ -21,6 +23,9 @@ services:
       - postgres
     links:
       - postgres
+    networks:
+      - pg-network
+
 
   bot:
     build:
@@ -28,12 +33,30 @@ services:
       dockerfile: bot/Dockerfile
     depends_on:
       - postgres
+    links:
+      - postgres
+      - recsys-service
     ports:
       - "3000:3000"
+    networks:
+      - pg-network
+
 
   recsys-service:
     build:
       context: .
       dockerfile: recsys/Dockerfile
+    links:
+      - postgres
     ports:
       - "8000:8000"
+      - "55051:55051"
+    expose:
+      - "50051"
+    networks:
+      - pg-network
+
+
+networks:
+  pg-network:
+    driver: bridge
