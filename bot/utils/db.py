@@ -73,3 +73,12 @@ def set_kids(id, kids):
         with create_engine(engine_string, echo=True).connect() as connection:
             connection.execute(text(f"UPDATE users SET kids_flg={kid_mapping.get(kids)} where user_id={id}"))
             connection.commit()
+
+
+def is_user_filled(id):
+    with create_engine(engine_string, echo=True).connect() as connection:
+        result = connection.execute(text(f"""SELECT * from users
+         WHERE user_id={id} and ((age is not null) or (income is not null) or (sex is not null) or (kids_flg is not null))""")).fetchall()
+        if result:
+            return True
+        return False
