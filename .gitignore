@@ -5,3 +5,4 @@ data/*.csv
 /trained_models
 hse-project-410510-75980d080a1d.json
 .idea
+.venv
