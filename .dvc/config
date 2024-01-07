@@ -1,0 +1,7 @@
+[core]
+    remote = data
+    no_scm = true
+['remote "data"']
+    url = gdrive://1OtXMuo9XlOKyVrr4NiGLhk80M2DujlSz
+    gdrive_service_account_json_file_path = ../hse-project-410510-75980d080a1d.json
+    gdrive_use_service_account = true
