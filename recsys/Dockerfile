@@ -9,6 +9,7 @@ RUN poetry config virtualenvs.create false
 WORKDIR /recsys
 
 COPY pyproject.toml poetry.lock /recsys/
+RUN poetry config installer.max-workers 10
 RUN poetry install --no-interaction --no-ansi
 
 COPY ./recsys /recsys/

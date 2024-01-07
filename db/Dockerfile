@@ -11,6 +11,7 @@ COPY ./get_data.sh /app/
 RUN ./get_data.sh
 
 COPY pyproject.toml poetry.lock /app/
+RUN poetry config installer.max-workers 10
 RUN poetry install --no-interaction --no-ansi
 
 
