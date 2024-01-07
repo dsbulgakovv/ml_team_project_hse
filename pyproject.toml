@@ -1,0 +1,60 @@
+[tool.poetry]
+name = "ml-team-project-hse"
+version = "0.1.0"
+description = ""
+authors = ["Nikita Koshelev <koshelev.nd@gmail.com>"]
+readme = "README.md"
+packages = [{include = "ml_team_project_hse"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^2.1.4"
+numpy = "^1.26.3"
+pre-commit = "^3.6.0"
+
+
+[tool.poetry.group.dev.dependencies]
+matplotlib = "^3.8.2"
+implicit = "^0.7.2"
+seaborn = "^0.13.1"
+
+
+[tool.poetry.group.bot.dependencies]
+aiogram = "^3.3.0"
+sqlalchemy = "^2.0.25"
+psycopg2 = "^2.9.9"
+requests = "2.28.1"
+
+
+[tool.poetry.group.recsys.dependencies]
+fastapi = "^0.108.0"
+uvicorn = "^0.25.0"
+
+
+[tool.poetry.group.db.dependencies]
+sqlalchemy = "^2.0.25"
+psycopg2 = "^2.9.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 90
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 90
+lines_after_imports = 2
+
+[tool.flake8]
+max-line-length = 120
+
+[tool.nbqa.config]
+black = "pyproject.toml"
+isort = "pyproject.toml"
+flake8 = "setup.cfg"
+
