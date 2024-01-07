@@ -1,14 +1,14 @@
-import requests
 from aiogram import Router
 from aiogram.filters import StateFilter
-from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, ReplyKeyboardRemove
+from utils.recsys_api import RecsysAPI
 
 
 markup_text = "<b>Фильм:</b> {}\n\nГод выпуска: {}\n\nЖанры: {}\n\n\n{}"
 
 router = Router()
+api = RecsysAPI()
 
 
 class Recommendation(StatesGroup):
@@ -20,8 +20,8 @@ class Recommendation(StatesGroup):
 
 
 @router.message(StateFilter(Recommendation.popular))
-async def popular(message: Message, state: FSMContext):
-    response = requests.get("http://recsys-service:8000/popular")
+async def popular(message: Message):
+    response = await api.get_popular()
     await message.answer(
-        f"Фильмы: {response.json().get('movies')}", reply_markup=ReplyKeyboardRemove()
+        f"Фильмы: {response.get('movies')}", reply_markup=ReplyKeyboardRemove()
     )

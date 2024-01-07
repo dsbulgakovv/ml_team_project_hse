@@ -7,12 +7,13 @@ WORKDIR /app
 
 COPY ./db /app/
 
-COPY ./get_data.sh /app/
-RUN ./get_data.sh
-
 COPY pyproject.toml poetry.lock /app/
 RUN poetry config installer.max-workers 10
-RUN poetry install --no-interaction --no-ansi --without bot,recsys,dev
+RUN poetry install --no-interaction --no-ansi --no-root --without bot,recsys,dev
+
+COPY ./.dvc /app/.dvc
+COPY ./data.dvc ./trained_models.dvc /app/
+RUN dvc pull data
 
 
 CMD ["poetry", "run", "python", "init-script.py"]

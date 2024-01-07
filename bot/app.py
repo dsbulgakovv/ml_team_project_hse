@@ -9,8 +9,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.markdown import hbold
-from handlers import recommendations, user_info
-from handlers.recommendations import Recommendation
+from handlers import recommend, user_info
+from handlers.recommend import Recommendation
 from handlers.user_info import User
 from utils.db import check_user, is_user_filled
 
@@ -64,7 +64,7 @@ async def start_recommendations(message: types.Message, state: FSMContext) -> No
 
 async def main() -> None:
 
-    dp.include_routers(user_info.router, recommendations.router)
+    dp.include_routers(user_info.router, recommend.router)
     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
     await dp.start_polling(bot)
