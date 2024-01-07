@@ -10,7 +10,7 @@ WORKDIR /recsys
 
 COPY pyproject.toml poetry.lock /recsys/
 RUN poetry config installer.max-workers 10
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-ansi --without bot,db,dev
 
 COPY ./recsys /recsys/
 

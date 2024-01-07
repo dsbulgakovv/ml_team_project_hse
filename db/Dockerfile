@@ -12,7 +12,7 @@ RUN ./get_data.sh
 
 COPY pyproject.toml poetry.lock /app/
 RUN poetry config installer.max-workers 10
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-ansi --without bot,recsys,dev
 
 
 CMD ["poetry", "run", "python", "init-script.py"]
