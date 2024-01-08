@@ -3,3 +3,4 @@ downloaded
 data/*.csv
 /data
 /trained_models
+/artifacts
