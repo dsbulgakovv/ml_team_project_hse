@@ -27,12 +27,15 @@ class Form(StatesGroup):
 
 
 @dp.message(CommandStart())
-async def command_start_handler(message: types.Message, state: FSMContext) -> None:
+async def command_start_handler(
+    message: types.Message, state: FSMContext, user_data: dict
+) -> None:
     """Наполняем данные о пользователе если он новый, иначе сразу предлагаем фильм"""
 
     await message.answer(f"Привет, {hbold(message.from_user.full_name)}!")
-    new_user = check_user(message.from_user.id)
-    if new_user:
+    is_new_user = check_user(message.from_user.id)
+    user_data[message.from_user.id] = {}
+    if is_new_user:
         buttons = [[KeyboardButton(text="Да"), KeyboardButton(text="Почему бы и нет")]]
         keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
         await message.answer("Поделитесь данными о себе", reply_markup=keyboard)

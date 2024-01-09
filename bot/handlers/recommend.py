@@ -8,6 +8,7 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
 )
+from utils.db import get_movie_data
 from utils.recsys_api import RecsysAPI
 
 
@@ -48,9 +49,7 @@ async def select_user_to_user(
 ) -> None:
     """Проверяем есть ли данные о типе контента и жанре"""
 
-    if not user_data.get(message.from_user.id) or not user_data.get(
-        message.from_user.id
-    ).get("user_to_user"):
+    if not user_data.get(message.from_user.id).get("user_to_user"):
         keyboard = ReplyKeyboardMarkup(
             keyboard=[[KeyboardButton(text="Фильм"), KeyboardButton(text="Сериал")]],
             resize_keyboard=True,
@@ -72,7 +71,9 @@ async def select_user_to_user(
 
 
 @router.message(StateFilter(UserToUserGroup.start))
-async def reset_content_type(message: Message, state: FSMContext) -> None:
+async def reset_content_type(
+    message: Message, state: FSMContext, user_data: dict
+) -> None:
     """Изменить выбранный тип контента"""
 
     if message.text.lower() == "изменить":
@@ -80,6 +81,7 @@ async def reset_content_type(message: Message, state: FSMContext) -> None:
             keyboard=[[KeyboardButton(text="Фильм"), KeyboardButton(text="Сериал")]],
             resize_keyboard=True,
         )
+        user_data.get(message.from_user.id)["user_to_user"] = []
         await message.answer("Какой контент интересует?", reply_markup=keyboard)
         await state.set_state(UserToUserGroup.content_type)
     else:
@@ -118,18 +120,97 @@ async def set_genre(message: Message, state: FSMContext, user_data: dict) -> Non
 
 
 @router.message(StateFilter(Recommendation.personal))
-async def popular(message: Message):
-    response = await api.get_personal(message.from_user.id)
-    await message.answer(
-        f"Фильмы: {response.get('movies')}", reply_markup=ReplyKeyboardRemove()
-    )
+async def popular(message: Message, state: FSMContext, user_data: dict):
+
+    if not user_data.get(message.from_user.id).get("popular"):
+        response = await api.get_personal(message.from_user.id)
+        user_data[message.from_user.id]["popular"] = response.get("movies")
+    if message.text.lower() == "хватит":
+        await message.answer("Заканчиваю", reply_markup=ReplyKeyboardRemove())
+    elif message.text.lower() == "похожий на этот":
+        await message.answer("Подбираю")
+        await state.set_state(Recommendation.similar_movies)
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Показывай")]], resize_keyboard=True
+        )
+        await message.answer("Готово", reply_markup=keyboard)
+    else:
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="Еще"),
+                    KeyboardButton(text="Хватит"),
+                    KeyboardButton(text="Похожий на этот"),
+                ]
+            ],
+            resize_keyboard=True,
+        )
+        movie = user_data[message.from_user.id]["popular"].pop(0)
+        user_data[message.from_user.id]["last_movie"] = movie
+        movie_data = get_movie_data(movie)
+        await message.answer(markup_text.format(*movie_data), reply_markup=keyboard)
 
 
 @router.message(StateFilter(Recommendation.similar_users))
-async def user_to_user(message: Message, user_data: dict):
-    content_type = user_data[message.from_user.id]["user_to_user"]["content_type"]
-    genre = user_data[message.from_user.id]["user_to_user"]["genre"]
-    response = await api.get_user_to_user(content_type, genre)
-    await message.answer(
-        f"Фильмы: {response.get('movies')}", reply_markup=ReplyKeyboardRemove()
-    )
+async def user_to_user(message: Message, state: FSMContext, user_data: dict):
+    if not user_data.get(message.from_user.id).get("user_to_user").get("movies"):
+        content_type = user_data[message.from_user.id]["user_to_user"]["content_type"]
+        genre = user_data[message.from_user.id]["user_to_user"]["genre"]
+        response = await api.get_user_to_user(content_type, genre)
+        user_data[message.from_user.id]["user_to_user"]["movies"] = response.get("movies")
+    if message.text.lower() == "хватит":
+        await message.answer("Заканчиваю", reply_markup=ReplyKeyboardRemove())
+    elif message.text.lower() == "похожий на этот":
+        await message.answer("Подбираю")
+        await state.set_state(Recommendation.similar_movies)
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Показывай")]], resize_keyboard=True
+        )
+        await message.answer("Готово", reply_markup=keyboard)
+    else:
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="Еще"),
+                    KeyboardButton(text="Хватит"),
+                    KeyboardButton(text="Похожий на этот"),
+                ]
+            ],
+            resize_keyboard=True,
+        )
+        movie = user_data[message.from_user.id]["user_to_user"]["movies"].pop(0)
+        user_data[message.from_user.id]["last_movie"] = movie
+        movie_data = get_movie_data(movie)
+        await message.answer(markup_text.format(*movie_data), reply_markup=keyboard)
+
+
+@router.message(StateFilter(Recommendation.similar_movies))
+async def similar_movie(message: Message, state: FSMContext, user_data: dict):
+
+    if not user_data.get(message.from_user.id).get("similar_movies"):
+        response = await api.get_personal(user_data[message.from_user.id]["last_movie"])
+        user_data[message.from_user.id]["similar_movies"] = response.get("movies")
+    if message.text.lower() == "хватит":
+        await message.answer("Заканчиваю", reply_markup=ReplyKeyboardRemove())
+    elif message.text.lower() == "похожий на этот":
+        await message.answer("Подбираю")
+        await state.set_state(Recommendation.similar_movies)
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Показывай")]], resize_keyboard=True
+        )
+        await message.answer("Готово", reply_markup=keyboard)
+    else:
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="Еще"),
+                    KeyboardButton(text="Хватит"),
+                    KeyboardButton(text="Похожий на этот"),
+                ]
+            ],
+            resize_keyboard=True,
+        )
+        movie = user_data[message.from_user.id]["similar_movies"].pop(0)
+        user_data[message.from_user.id]["last_movie"] = movie
+        movie_data = get_movie_data(movie)
+        await message.answer(markup_text.format(*movie_data), reply_markup=keyboard)
