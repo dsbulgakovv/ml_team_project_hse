@@ -4,7 +4,7 @@ import pandas as pd
 from artefacts_user_to_user import (
     create_user_df,
     data_find_best_content,
-    show_recommendations,
+    show_10_recommendations_for_user,
 )
 
 
@@ -16,14 +16,14 @@ data_user_to_user_model = pd.read_csv(
 
 # Загрузим model
 with open(
-    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/model_user_to_user.pkl",
+    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/model_user_to_user_39.pkl",
     "rb",
 ) as f:
     model = pickle.load(f)
 
 # Загрузим encoder
 with open(
-    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/encoder_user_to_user.pkl",
+    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/encoder_user_to_user_39.pkl",
     "rb",
 ) as f:
     encoder = pickle.load(f)
@@ -70,6 +70,6 @@ best_films_for_user = data_find_best_content(
 )
 
 ##############
-show_recommendations(
+show_10_recommendations_for_user(
     best_films_for_user=best_films_for_user, items_data=data_user_to_user_model
 )
