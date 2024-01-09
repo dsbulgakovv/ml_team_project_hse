@@ -11,4 +11,4 @@ __pycache__/
 notebooks/.DS_Store
 outputs
 .env
-
+recsys/.ipynb_checkpoints/app-checkpoint.py
