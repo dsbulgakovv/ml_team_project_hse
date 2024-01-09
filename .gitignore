@@ -7,6 +7,5 @@ data/*.csv
 hse-project-410510-75980d080a1d.json
 .idea
 recsys/.ipynb_checkpoints/app-checkpoint.py
-<<<<<<< HEAD
 __pycache__/
 notebooks/.DS_Store
