@@ -36,7 +36,7 @@ def get_similar_items_inference(
 
 
 def get_similar_items_inference_api(target_item: int, k_recommended: int):
-    outer_path = "../../../"
+    outer_path = "../"
     artifacts_path = outer_path + "artifacts/item_to_item/"
     model_path = artifacts_path + "knn_bm25_model.pkl"
     dataset_path = artifacts_path + "train_dataset.pkl"
