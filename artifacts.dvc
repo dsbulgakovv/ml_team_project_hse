@@ -1,6 +1,21 @@
 outs:
-- md5: 70a6908f4e686e03f72ffc48970dc57f.dir
-  size: 239614098
-  nfiles: 5
-  hash: md5
+- hash: md5
   path: artifacts
+  files:
+  - relpath: .DS_Store
+    md5: 55981b51227084b1704c6b355089d8aa
+  - relpath: popular/popularity_based.pkl
+    md5: f4c56a81be85b180fed6a4d5e821ebb8
+  - relpath: user_to_user/.DS_Store
+    md5: 194577a7e20bdcc7afbb718f502c134c
+    size: 6148
+  - relpath: user_to_user/data_for_rec_model_user_to_user.csv
+    md5: df625e9fbd814f5b0ad417ca2fc7377f
+  - relpath: user_to_user/encoder_user_to_user.pkl
+    md5: 7a038ec8715786c7e75315107de865f0
+  - relpath: user_to_user/encoder_user_to_user_39.pkl
+    md5: 7cfec6c636a3fca9b0af371dd808523c
+    size: 795
+  - relpath: user_to_user/model_user_to_user_39.pkl
+    md5: 76aef3616b76d3b446d4ae34d4228913
+    size: 3362603
