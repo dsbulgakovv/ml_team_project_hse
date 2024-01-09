@@ -11,7 +11,7 @@ def data_pkl_loader(file_path: str):
         return data
 
 
-def infer_item_to_item_model_loader(file_path: str):
+def item_to_item_model_loader(file_path: str):
     with open(file_path, "rb") as f:
         model = pickle.load(f)
     try:
@@ -29,7 +29,7 @@ def infer_item_to_item_model_loader(file_path: str):
 def get_similar_items_inference(
     model_file_path: str, target_item: int, dataset: Dataset, k: int
 ):
-    model = infer_item_to_item_model_loader(model_file_path)
+    model = item_to_item_model_loader(model_file_path)
     similar_items = model.get_similar_items(target_item=target_item, dataset=dataset, k=k)
 
     return similar_items
