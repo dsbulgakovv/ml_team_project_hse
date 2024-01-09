@@ -13,7 +13,7 @@ RUN poetry config installer.max-workers 10
 RUN poetry install --no-interaction --no-ansi --without bot,db,dev
 
 COPY ./.dvc /recsys/.dvc
-COPY ./data.dvc ./trained_models.dvc /recsys/
+COPY ./data.dvc ./artifacts.dvc /recsys/
 
 COPY ./recsys /recsys/
 
