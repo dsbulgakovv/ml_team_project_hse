@@ -5,6 +5,7 @@ from artefacts_user_to_user import (
     create_user_df,
     data_find_best_content,
     show_10_recommendations_for_user,
+
 )
 
 
@@ -70,6 +71,7 @@ best_films_for_user = data_find_best_content(
 )
 
 ##############
+<<<<<<< HEAD
 show_10_recommendations_for_user(
     best_films_for_user=best_films_for_user, items_data=data_user_to_user_model
 )
