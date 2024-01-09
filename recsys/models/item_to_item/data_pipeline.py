@@ -101,7 +101,7 @@ def prepare_data(
     return dataset_item_features, test_users, catalog
 
 
-def main():
+def _main():
     categorical_item_features = ["genres", "countries", "keywords"]
     outer_path = "../../../"
     data_path = outer_path + "data/"
@@ -123,4 +123,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    _main()
