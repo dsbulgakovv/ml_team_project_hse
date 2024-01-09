@@ -35,21 +35,25 @@ def get_similar_items_inference(
     return similar_items
 
 
-def _main():
+def get_similar_items_inference_api(target_item: int, k_recommended: int):
     outer_path = "../../../"
     artifacts_path = outer_path + "artifacts/item_to_item/"
     model_path = artifacts_path + "knn_bm25_model.pkl"
     dataset_path = artifacts_path + "train_dataset.pkl"
-    sample_target = 9506
     dataset = data_pkl_loader(dataset_path)
-    k_recommended = 10
     recommended_items = get_similar_items_inference(
         model_file_path=model_path,
-        target_item=sample_target,
+        target_item=target_item,
         dataset=dataset,
         k=k_recommended,
     )
     print(recommended_items)
+
+
+def _main():
+    target_item = 9506
+    k_recommended = 10
+    get_similar_items_inference_api(target_item=target_item, k_recommended=k_recommended)
 
 
 if __name__ == "__main__":
