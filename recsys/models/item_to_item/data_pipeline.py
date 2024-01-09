@@ -98,7 +98,7 @@ def prepare_data(
         cat_item_features=cat_item_features,
     )
 
-    return dataset_item_features, test_users, catalog
+    return dataset_item_features, test_users, catalog, train, test
 
 
 def _main():
@@ -107,7 +107,7 @@ def _main():
     data_path = outer_path + "data/"
     artifacts_path = outer_path + "artifacts/item_to_item/"
 
-    dataset, test_users_sample, items_catalog = prepare_data(
+    dataset, test_users_sample, items_catalog, train, test = prepare_data(
         items_data_path=data_path + "items.csv",
         cat_item_features=categorical_item_features,
         interactions_data_path=data_path + "interactions.csv",
@@ -116,6 +116,8 @@ def _main():
     artifacts_dict["train_dataset.pkl"] = dataset
     artifacts_dict["test_users_sample.pkl"] = test_users_sample
     artifacts_dict["items_catalog.pkl"] = items_catalog
+    artifacts_dict["train.pkl"] = train
+    artifacts_dict["test.pkl"] = test
 
     for file_name, data_object in artifacts_dict.items():
         with open(artifacts_path + file_name, "wb") as f:
