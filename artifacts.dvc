@@ -1,5 +1,8 @@
 outs:
-- hash: md5
+- md5: 8c86b61ba35a526ae3aadba396d88da4.dir
+  size: 407437980
+  nfiles: 9
+  hash: md5
   path: artifacts
   files:
   - relpath: .DS_Store
