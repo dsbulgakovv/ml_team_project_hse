@@ -4,7 +4,7 @@ import pandas as pd
 from artefacts_user_to_user import (
     create_user_df,
     data_find_best_content,
-    show_10_recommendations_for_user,
+    show_10_recommendations_for_user
 )
 
 
