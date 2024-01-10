@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from infer import get_movies
 from models.item_to_item.infer import get_similar_items_inference_api
+from models.personal.predict import get_movies_for_user
 
 
 app = FastAPI()
@@ -13,8 +13,8 @@ def root():
 
 
 @app.get("/popular")
-async def popular():
-    resp = get_movies()
+async def popular(user_id: int):
+    resp = get_movies_for_user(user_id)
     return JSONResponse(content={"movies": resp})
 
 
