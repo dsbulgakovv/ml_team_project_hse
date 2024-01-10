@@ -1,0 +1,79 @@
+from func import (
+    data_find_best_content_u2u,
+    get_pickle_artefact,
+    get_prepaid_data,
+    prepaid_user_data_u2u,
+    show_10_recommendations_for_user,
+)
+
+
+def pipline_user_to_user(
+    age_input: str,
+    income_input: str,
+    sex_input: str,
+    kids_input: int,
+    genre_input: str,
+    content_type_input: str,
+    path: str = "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse",
+) -> list:
+    """Func get user data, user choise, path to project (optional), return top 10 content
+
+    1. Load data and artifacts
+    2. Prepaid data for predict user cluster (with KNN model)
+    3. Predict user cluster & Prepaid best films for user (Sort most popular selected content in user cluster)
+    4. Prepaid top 10 films
+
+    return: list with top 10 films for user
+    """
+    # 1. load data & model & encoder
+    knn = get_pickle_artefact(path + "/artifacts/user_to_user/model_user_to_user_39.pkl")
+
+    encoder = get_pickle_artefact(
+        path + "/artifacts/user_to_user/encoder_user_to_user_39.pkl"
+    )
+
+    prepaid_data = get_prepaid_data(
+        path + "/artifacts/user_to_user/data_for_rec_model_user_to_user.csv"
+    )
+
+    items_data = get_prepaid_data(path + "/data/items.csv")
+
+    # 2. prepaid user_data
+    user_data = prepaid_user_data_u2u(
+        encoder, age_input, income_input, sex_input, kids_input
+    )
+
+    # 3. prepaid best film for user
+    best_films_for_user = data_find_best_content_u2u(
+        user_data, prepaid_data, knn, genre_input, content_type_input
+    )
+
+    # 4. prepaid top 10 films
+    top_10_films = show_10_recommendations_for_user(best_films_for_user, items_data)
+
+    return top_10_films
+
+
+def _main():
+
+    age = ("age_25_34",)
+    income = ("income_150_inf",)
+    sex = ("М",)
+    kids = (0,)
+    genre = ("ужасы",)
+    content_type = "film"
+
+    rec_films = pipline_user_to_user(
+        age_input=age,
+        income_input=income,
+        sex_input=sex,
+        kids_input=kids,
+        genre_input=genre,
+        content_type_input=content_type,
+    )
+
+    return rec_films
+
+
+if __name__ == "__main__":
+    print(_main())
