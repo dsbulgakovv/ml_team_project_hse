@@ -40,6 +40,8 @@ services:
       - "3000:3000"
     networks:
       - pg-network
+    env_file:
+      - .env
 
 
   recsys-service:
