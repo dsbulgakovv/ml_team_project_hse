@@ -188,7 +188,9 @@ async def user_to_user(message: Message, state: FSMContext, user_data: dict):
 async def similar_movie(message: Message, state: FSMContext, user_data: dict):
 
     if not user_data.get(message.from_user.id).get("similar_movies"):
-        response = await api.get_personal(user_data[message.from_user.id]["last_movie"])
+        response = await api.get_movie_to_movie(
+            user_data[message.from_user.id]["last_movie"]
+        )
         user_data[message.from_user.id]["similar_movies"] = response.get("movies")
     if message.text.lower() == "хватит":
         await message.answer("Заканчиваю", reply_markup=ReplyKeyboardRemove())

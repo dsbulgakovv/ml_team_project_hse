@@ -8,7 +8,7 @@ class RecsysAPI:
     async def get_personal(self, user_id):
         async with ClientSession() as session:
             async with session.get(
-                f"{self.base_url}/popular", params={"id": user_id}
+                f"{self.base_url}/popular", params={"user_id": user_id}
             ) as resp:
                 response = await resp.json()
         return response
@@ -24,9 +24,7 @@ class RecsysAPI:
 
     async def get_movie_to_movie(self, movie):
         async with ClientSession() as session:
-            async with session.get(
-                f"{self.base_url}/movie_to_movie", params={"movie": movie}
-            ) as resp:
+            async with session.get(f"{self.base_url}/movie_to_movie/{movie}") as resp:
                 response = await resp.json()
         return response
 
