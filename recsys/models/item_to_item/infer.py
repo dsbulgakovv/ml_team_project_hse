@@ -1,7 +1,7 @@
 import pickle
 import warnings
 
-from item_to_item_models import ItemToItemKnnBM25, ItemToItemKnnTFIDF
+from models.item_to_item.item_to_item_models import ItemToItemKnnBM25, ItemToItemKnnTFIDF
 from rectools.dataset import Dataset
 
 
