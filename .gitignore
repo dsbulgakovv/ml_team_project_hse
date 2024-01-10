@@ -12,3 +12,4 @@ notebooks/.DS_Store
 outputs
 .env
 recsys/.ipynb_checkpoints/app-checkpoint.py
+notebooks/.DS_Store
