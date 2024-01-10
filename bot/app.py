@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import sys
 
 from aiogram import Bot, Dispatcher, F, Router, types
@@ -14,7 +15,7 @@ from handlers.user_info import User
 from utils.db import check_user
 
 
-TOKEN = "token"  # TODO унести отсюда
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 dp = Dispatcher()
 dp["user_data"] = {}
