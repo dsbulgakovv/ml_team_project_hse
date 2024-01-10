@@ -104,7 +104,7 @@ def get_movie_data(movie_id):
     with create_engine(engine_string, echo=True).connect() as connection:
         results = connection.execute(
             text(
-                f"SELECT title, release_year, genres, description FROM items where item_id={movie_id}"
+                f"SELECT title, CAST(release_year as INTEGER), countries, genres, description FROM items where item_id={movie_id}"
             )
         ).fetchall()
         return results[0]
