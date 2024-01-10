@@ -1,8 +1,13 @@
 import pickle
+import sys
 import warnings
 
+from models.item_to_item import item_to_item_models
 from models.item_to_item.item_to_item_models import ItemToItemKnnBM25, ItemToItemKnnTFIDF
 from rectools.dataset import Dataset
+
+
+sys.modules["item_to_item_models"] = item_to_item_models
 
 
 def data_pkl_loader(file_path: str):
@@ -36,8 +41,7 @@ def get_similar_items_inference(
 
 
 def get_similar_items_inference_api(target_item: int, k_recommended: int):
-    outer_path = "../"
-    artifacts_path = outer_path + "artifacts/item_to_item/"
+    artifacts_path = "artifacts/item_to_item/"
     model_path = artifacts_path + "knn_bm25_model.pkl"
     dataset_path = artifacts_path + "train_dataset.pkl"
     dataset = data_pkl_loader(dataset_path)
@@ -47,7 +51,7 @@ def get_similar_items_inference_api(target_item: int, k_recommended: int):
         dataset=dataset,
         k=k_recommended,
     )
-    print(recommended_items)
+    return recommended_items
 
 
 def _main():
