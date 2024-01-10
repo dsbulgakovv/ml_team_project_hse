@@ -12,7 +12,7 @@ from utils.db import get_movie_data
 from utils.recsys_api import RecsysAPI
 
 
-markup_text = "<b>Фильм:</b> {}\n\nГод выпуска: {}\n\nЖанры: {}\n\n\n{}"
+markup_text = "<b>Фильм:</b> {}\n\nГод выпуска: {}\nСтрана: {}\nЖанр: {}\n\n\n{}"
 
 router = Router()
 api = RecsysAPI()
