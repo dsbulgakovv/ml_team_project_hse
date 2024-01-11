@@ -1,28 +1,53 @@
-from time import sleep
+import logging
 
-import pandas as pd
-from sqlalchemy import create_engine
+import hydra
 
 
-sleep(10)
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
-dbname = "test"
-user = "admin"
-password = "admin"
-host = "postgres"
-port = "5432"  # TODO в конфиг
-engine = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
-df_users = pd.read_csv("data/users.csv")
-engine_users = create_engine(engine)
-df_users.to_sql("users", engine_users, index=False, if_exists="replace")
+@hydra.main(config_path="configs", config_name="cfg", version_base=None)
+def main(cfg):
 
-df_items = pd.read_csv("data/items.csv")
-engine_items = create_engine(engine)
-df_items.to_sql("items", engine_items, index=False, if_exists="replace")
+    from time import sleep
 
-df_interactions = pd.read_csv("data/interactions.csv")
-engine_interactions = create_engine(engine)
-df_interactions.to_sql(
-    "interactions", engine_interactions, index=False, if_exists="replace"
-)
+    import pandas as pd
+    from sqlalchemy import create_engine
+
+    log.info("Sleeping for 10 seconds to allow postgresql init...")
+    sleep(10)
+
+    log.info(f"Connection to the database: '{cfg.db.name}'...")
+    db_address = (
+        f"{cfg.db.type}://{cfg.db.user}:"
+        f"{cfg.db.password}@{cfg.db.host}:"
+        f"{cfg.db.port}/{cfg.db.name}"
+    )
+    engine = create_engine(db_address)
+    log.info("Connection established!")
+
+    log.info(f"Loading file '{cfg.data.filenames.users}' to the database...")
+    df_users = pd.read_csv(cfg.data.dir_path + cfg.data.filenames.users)
+    df_users.to_sql(
+        name=cfg.db.tables.users, con=engine, index=False, if_exists="replace"
+    )
+    log.info("Successfully loaded!")
+
+    log.info(f"Loading file '{cfg.data.filenames.items}' to the database...")
+    df_items = pd.read_csv(cfg.data.dir_path + cfg.data.filenames["items"])
+    df_items.to_sql(
+        name=cfg.db.tables.items, con=engine, index=False, if_exists="replace"
+    )
+    log.info("Successfully loaded!")
+
+    log.info(f"Loading file '{cfg.data.filenames.interactions}' to the database...")
+    df_interactions = pd.read_csv(cfg.data.dir_path + cfg.data.filenames.interactions)
+    df_interactions.to_sql(
+        name=cfg.db.tables.interactions, con=engine, index=False, if_exists="replace"
+    )
+    log.info("Successfully loaded!")
+
+
+if __name__ == "__main__":
+    main()
