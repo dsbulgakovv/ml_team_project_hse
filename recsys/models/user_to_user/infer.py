@@ -6,19 +6,19 @@ from func import (
     show_10_recommendations_for_user,
 )
 
+from bot.utils.db import get_user_data_db
+
 
 def pipline_user_to_user(
-    age_input: str,
-    income_input: str,
-    sex_input: str,
-    kids_input: int,
+    user_id: int,
     genre_input: str,
     content_type_input: str,
     path: str = "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse",
 ) -> list:
-    """Func get user data, user choise, path to project (optional), return top 10 content
+    """Func get user id, user choise, path to project (optional), return top 10 content
 
     1. Load data and artifacts
+    2. SELECT to DB and get user infi
     2. Prepaid data for predict user cluster (with KNN model)
     3. Predict user cluster & Prepaid best films for user (Sort most popular selected content in user cluster)
     4. Prepaid top 10 films
@@ -38,17 +38,24 @@ def pipline_user_to_user(
 
     items_data = get_prepaid_data(path + "/data/items.csv")
 
-    # 2. prepaid user_data
-    user_data = prepaid_user_data_u2u(
-        encoder, age_input, income_input, sex_input, kids_input
-    )
+    # 2. SELECT to DB and get user infi
 
-    # 3. prepaid best film for user
+    data_user = get_user_data_db(user_id)
+
+    age = data_user[1]
+    income = data_user[2]
+    sex = data_user[3]
+    kids_flg = int(data_user[4])
+
+    # 3. prepaid user_data
+    user_data = prepaid_user_data_u2u(encoder, age, income, sex, kids_flg)
+
+    # 4. prepaid best film for user
     best_films_for_user = data_find_best_content_u2u(
         user_data, prepaid_data, knn, genre_input, content_type_input
     )
 
-    # 4. prepaid top 10 films
+    # 5. prepaid top 10 films
     top_10_films = show_10_recommendations_for_user(best_films_for_user, items_data)
 
     return top_10_films
@@ -56,20 +63,12 @@ def pipline_user_to_user(
 
 def _main():
 
-    age = ("age_25_34",)
-    income = ("income_150_inf",)
-    sex = ("М",)
-    kids = (0,)
-    genre = ("ужасы",)
+    id = 555
+    genre = "ужасы"
     content_type = "film"
 
     rec_films = pipline_user_to_user(
-        age_input=age,
-        income_input=income,
-        sex_input=sex,
-        kids_input=kids,
-        genre_input=genre,
-        content_type_input=content_type,
+        user_id=id, genre_input=genre, content_type_input=content_type
     )
 
     return rec_films

@@ -25,19 +25,12 @@ async def item_to_item(movie_id: int):
     return JSONResponse(content={"movies": resp})
 
 
-@app.get("/user_to_user/{age}_{income}_{sex}_{kids}_{genre}_{content_type}")
-async def user_to_user(
-    age: str, income: str, sex: str, kids: int, genre: str, content_type: str
-):
+@app.get("/user_to_user/{user_id}_{genre}_{content_type}")  # todo такой формат?
+async def user_to_user(user_id: int, content_type: str, genre: str):
     """Функция получает на вход данные о пользователе и предпочтениях, возвращает dict в переменную resp_dict"""
 
     resp_dict = pipline_user_to_user(
-        age_input=age,
-        income_input=income,
-        sex_input=sex,
-        kids_input=kids,
-        genre_input=genre,
-        content_type_input=content_type,
-    )
+        user_id=user_id, genre_input=genre, content_type_input=content_type
+    )  # todo функция возвращает dict
 
-    return JSONResponse(content=resp_dict)
+    return JSONResponse(content=resp_dict)  # todo такой формат?
