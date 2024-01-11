@@ -1,0 +1,18 @@
+db:
+    type: "postgresql"
+    name: "test"
+    user: "admin"
+    password: "admin"
+    host: "postgres"
+    port: "5432"
+    tables:
+        users: "users"
+        items: "items"
+        interactions: "interactions"
+
+data:
+    dir_path: "data/"
+    filenames:
+        users: "users.csv"
+        items: "items.csv"
+        interactions: "interactions.csv"

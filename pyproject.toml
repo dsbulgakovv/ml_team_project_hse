@@ -42,6 +42,7 @@ sqlalchemy = "^2.0.25"
 psycopg2 = "^2.9.9"
 dvc-gdrive = "^3.0.1"
 dvc = "^3.38.1"
+hydra-core = "^1.3.2"
 
 
 [build-system]
