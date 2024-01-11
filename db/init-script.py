@@ -34,10 +34,10 @@ def main(cfg):
     )
     log.info("Successfully loaded!")
 
-    log.info(f"Loading file '{cfg.data.filenames.items}' to the database...")
+    log.info(f"Loading file '{cfg.data.filenames['items']}' to the database...")
     df_items = pd.read_csv(cfg.data.dir_path + cfg.data.filenames["items"])
     df_items.to_sql(
-        name=cfg.db.tables.items, con=engine, index=False, if_exists="replace"
+        name=cfg.db.tables["items"], con=engine, index=False, if_exists="replace"
     )
     log.info("Successfully loaded!")
 
