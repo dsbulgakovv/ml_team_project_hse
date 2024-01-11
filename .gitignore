@@ -9,3 +9,5 @@ hse-project-410510-75980d080a1d.json
 __pycache__/
 outputs
 .env
+recsys/.ipynb_checkpoints/app-checkpoint.py
+notebooks/.DS_Store

@@ -108,3 +108,21 @@ def get_movie_data(movie_id):
             )
         ).fetchall()
         return results[0]
+
+
+def get_user_data_db(id):
+    with create_engine(engine_string, echo=True).connect() as connection:
+        result = connection.execute(
+            text(
+                f"""SELECT
+                        user_id
+                        , COALESCE(age, (SELECT MODA(age) FROM users)) AS age
+                        , COALESCE(income, (SELECT MODA(income) FROM users)) AS income
+                        , COALESCE(sex, (SELECT MODA(sex) FROM users)) AS sex
+                        , COALESCE(kids_flg, (SELECT MODA(kids_flg) FROM users)) AS kids_flg
+                    FROM users
+                    WHERE user_id={id} """
+            )
+        ).fetchall()
+
+        return result[0]

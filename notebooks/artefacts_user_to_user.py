@@ -168,3 +168,48 @@ def show_recommendations(best_films_for_user: pd.Series, items_data: pd.DataFram
 
         # Продолжаем или останавливаемя ('next'?) - кнопка из ТГ
         input_val = input("next для следующих рекомендаций: ")
+
+
+def show_10_recommendations_for_user(
+    best_films_for_user: pd.Series, items_data: pd.DataFrame
+):
+
+    i = 1  # Порядковый номер рекомендации
+
+    recomendet_film = best_films_for_user[:10].index
+
+    if len(recomendet_film) > 0:  # Если есть контент - выведем его
+        print("Составляем рекомендации на основе похожих на вас пользователей...")
+
+        # Навесим на id рекомендуемых фильмов инфу из items
+        df_to_show_index = pd.DataFrame(recomendet_film, columns=["item_id"])
+        df_to_show = items_data.merge(
+            df_to_show_index, how="inner", on="item_id"
+        )  # тут ходим в табличку items за описанием по 10 фильмам
+
+        # Выводим контент
+
+        print("Рекомендуем посмотреть следущие фильмы: ")
+
+        for film in recomendet_film:  # Итерируемся по каждому фильму
+            # Собираем инфу о фильме в переменные
+            rec = df_to_show[df_to_show["item_id"] == film][
+                ["title", "release_year", "genres", "content_type"]
+            ]
+
+            if rec["content_type"].iloc[0] == "film":
+                content = "Фильм"
+            else:
+                content = "Сериал"
+
+            year_show = int(rec["release_year"].iloc[0])
+            title_show = rec["title"].iloc[0]
+            genres_show = rec["genres"].iloc[0]
+
+            # Выводим контент
+            print(
+                f"{i}. {content}: {title_show}, год выпуска: {year_show}, жанр: {genres_show}"
+            )
+            i = i + 1
+    else:
+        print("Подходящего контента у нас нет :( попробуйте изменить критерии поиска")
