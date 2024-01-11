@@ -13,11 +13,11 @@ class RecsysAPI:
                 response = await resp.json()
         return response
 
-    async def get_user_to_user(self, content_type, genre):
+    async def get_user_to_user(self, user_id, content_type, genre):
         async with ClientSession() as session:
             async with session.get(
                 f"{self.base_url}/user_to_user",
-                params={"content_type": content_type, "genre": genre},
+                params={"user_id": user_id, "content_type": content_type, "genre": genre},
             ) as resp:
                 response = await resp.json()
         return response

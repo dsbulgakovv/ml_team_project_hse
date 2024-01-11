@@ -156,7 +156,7 @@ async def user_to_user(message: Message, state: FSMContext, user_data: dict):
     if not user_data.get(message.from_user.id).get("user_to_user").get("movies"):
         content_type = user_data[message.from_user.id]["user_to_user"]["content_type"]
         genre = user_data[message.from_user.id]["user_to_user"]["genre"]
-        response = await api.get_user_to_user(content_type, genre)
+        response = await api.get_user_to_user(message.from_user.id, content_type, genre)
         user_data[message.from_user.id]["user_to_user"]["movies"] = response.get("movies")
     if message.text.lower() == "хватит":
         await message.answer("Заканчиваю", reply_markup=ReplyKeyboardRemove())
