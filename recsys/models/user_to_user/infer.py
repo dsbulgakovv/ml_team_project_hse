@@ -1,4 +1,4 @@
-from func import (
+from .func import (
     data_find_best_content_u2u,
     get_pickle_artefact,
     get_prepaid_data,
