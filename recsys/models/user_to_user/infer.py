@@ -39,7 +39,7 @@ def pipline_user_to_user(
     items_data = get_prepaid_data(path + "/data/items.csv")
 
     # 2. SELECT to DB and get user infi
-
+    print("select")
     data_user = get_user_data_db(user_id)
 
     age = data_user[1]
