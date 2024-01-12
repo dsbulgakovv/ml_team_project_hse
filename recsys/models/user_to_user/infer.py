@@ -2,11 +2,10 @@ from func import (
     data_find_best_content_u2u,
     get_pickle_artefact,
     get_prepaid_data,
+    get_user_data_db,
     prepaid_user_data_u2u,
     show_10_recommendations_for_user,
 )
-
-from bot.utils.db import get_user_data_db
 
 
 def pipline_user_to_user(

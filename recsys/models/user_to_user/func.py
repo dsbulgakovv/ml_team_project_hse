@@ -1,6 +1,15 @@
 import pickle
 
 import pandas as pd
+from sqlalchemy import create_engine, text
+
+
+dbname = "test"
+user = "admin"
+password = "admin"
+host = "postgres"
+port = "5432"  # TODO в конфиг
+engine_string = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
 
 def get_pickle_artefact(file_path: str):
@@ -162,3 +171,21 @@ def show_10_recommendations_for_user(
         top_10_films["error"] = "no_films"
         return top_10_films
         # print("Подходящего контента у нас нет :( попробуйте изменить критерии поиска")
+
+
+def get_user_data_db(id):
+    with create_engine(engine_string, echo=True).connect() as connection:
+        result = connection.execute(
+            text(
+                f"""SELECT
+                        user_id
+                        , COALESCE(age, (SELECT MODA(age) FROM users)) AS age
+                        , COALESCE(income, (SELECT MODA(income) FROM users)) AS income
+                        , COALESCE(sex, (SELECT MODA(sex) FROM users)) AS sex
+                        , COALESCE(kids_flg, (SELECT MODA(kids_flg) FROM users)) AS kids_flg
+                    FROM users
+                    WHERE user_id={id} """
+            )
+        ).fetchall()
+
+        return result[0]
