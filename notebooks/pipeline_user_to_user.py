@@ -4,19 +4,28 @@ import pandas as pd
 from artefacts_user_to_user import (
     create_user_df,
     data_find_best_content,
-    show_recommendations,
+    show_10_recommendations_for_user,
 )
 
 
 # Загрузим df
-data_user_to_user_model = pd.read_csv("data_for_rec_model_user_to_user.csv", sep=",")
+data_user_to_user_model = pd.read_csv(
+    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/data_for_rec_model_user_to_user.csv",
+    sep=",",
+)
 
 # Загрузим model
-with open("model_user_to_user.pkl", "rb") as f:
+with open(
+    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/model_user_to_user_39.pkl",
+    "rb",
+) as f:
     model = pickle.load(f)
 
 # Загрузим encoder
-with open("encoder_user_to_user.pkl", "rb") as f:
+with open(
+    "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse/artifacts/user_to_user/encoder_user_to_user_39.pkl",
+    "rb",
+) as f:
     encoder = pickle.load(f)
 
 
@@ -44,9 +53,9 @@ input_user_df = create_user_df(
 # Ввоод данных от ползователя
 genre_type_input = input(
     """STR: 'hbo', 'боевики', 'вестерн', 'военные', 'детективы', 'детские', 'для взрослых', 'документальное', 'драмы',
-     'иное', 'исторические', 'историческое', 'комедии', 'короткометражные', 'криминал', 'мелодрамы', 'мистика',
-      'музыка', 'музыкальные', 'мультфильмы', 'полнометражные', 'приключения', 'развитие', 'развлекательные',
-       'семейное', 'советские', 'спорт', 'триллеры', 'ужасы', 'фантастика': """
+    'иное', 'исторические', 'историческое', 'комедии', 'короткометражные', 'криминал', 'мелодрамы', 'мистика', 'музыка',
+     'музыкальные', 'мультфильмы', 'полнометражные', 'приключения', 'развитие', 'развлекательные', 'семейное',
+     'советские', 'спорт', 'триллеры', 'ужасы', 'фантастика': """
 )
 
 content_type_input = input("STR: 'series' 'film': ")
@@ -61,6 +70,6 @@ best_films_for_user = data_find_best_content(
 )
 
 ##############
-show_recommendations(
+show_10_recommendations_for_user(
     best_films_for_user=best_films_for_user, items_data=data_user_to_user_model
 )
