@@ -64,8 +64,8 @@ def edit_preferences_keyboard() -> ReplyKeyboardMarkup:
 
 def content_type_keyboard() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardBuilder()
-    kb.button(text="Фильм")
-    kb.button(text="Сериал")
+    kb.button(text="Фильмы")
+    kb.button(text="Сериалы")
 
     return kb.as_markup(resize_keyboard=True)
 
