@@ -1,4 +1,4 @@
-from .func import (
+from .utils import (
     data_find_best_content_u2u,
     get_pickle_artefact,
     get_prepaid_data,
@@ -8,12 +8,7 @@ from .func import (
 )
 
 
-def pipline_user_to_user(
-    user_id: int,
-    genre_input: str,
-    content_type_input: str,
-    path: str = "/Users/dan/git_repo/movs/project_1y/project_1223/ml_team_project_hse",
-) -> list:
+def pipline_user_to_user(user_id: int, genre_input: str, content_type_input: str) -> list:
     """Func get user id, user choise, path to project (optional), return top 10 content
 
     1. Load data and artifacts
@@ -25,20 +20,15 @@ def pipline_user_to_user(
     return: list with top 10 films for user
     """
     # 1. load data & model & encoder
-    knn = get_pickle_artefact(path + "/artifacts/user_to_user/model_user_to_user_39.pkl")
+    knn = get_pickle_artefact("artifacts/user_to_user/model_user_to_user_39.pkl")
 
-    encoder = get_pickle_artefact(
-        path + "/artifacts/user_to_user/encoder_user_to_user_39.pkl"
-    )
+    encoder = get_pickle_artefact("artifacts/user_to_user/encoder_user_to_user_39.pkl")
 
     prepaid_data = get_prepaid_data(
-        path + "/artifacts/user_to_user/data_for_rec_model_user_to_user.csv"
+        "artifacts/user_to_user/data_for_rec_model_user_to_user.csv"
     )
 
-    items_data = get_prepaid_data(path + "/data/items.csv")
-
     # 2. SELECT to DB and get user infi
-    print("select")
     data_user = get_user_data_db(user_id)
 
     age = data_user[1]
@@ -55,23 +45,6 @@ def pipline_user_to_user(
     )
 
     # 5. prepaid top 10 films
-    top_10_films = show_10_recommendations_for_user(best_films_for_user, items_data)
+    top_10_films = show_10_recommendations_for_user(best_films_for_user)
 
     return top_10_films
-
-
-def _main():
-
-    id = 555
-    genre = "ужасы"
-    content_type = "film"
-
-    rec_films = pipline_user_to_user(
-        user_id=id, genre_input=genre, content_type_input=content_type
-    )
-
-    return rec_films
-
-
-if __name__ == "__main__":
-    print(_main())
