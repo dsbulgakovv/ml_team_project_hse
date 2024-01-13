@@ -12,6 +12,8 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.markdown import hbold
 from handlers import recommend, user_info
 from handlers.user_info import User
+from keyboards.data import share_data_keyboard
+from keyboards.general import start_keyboard
 from utils.db import check_user
 
 
@@ -37,15 +39,12 @@ async def command_start_handler(
     is_new_user = check_user(message.from_user.id)
     user_data[message.from_user.id] = {}
     if is_new_user:
-        buttons = [[KeyboardButton(text="Да"), KeyboardButton(text="Почему бы и нет")]]
-        keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
-        await message.answer("Поделитесь данными о себе", reply_markup=keyboard)
+        await message.answer(
+            "Поделитесь данными о себе", reply_markup=share_data_keyboard()
+        )
         await state.set_state(User.age)
     else:
-        keyboard = ReplyKeyboardMarkup(
-            keyboard=[[KeyboardButton(text="Поехали")]], resize_keyboard=True
-        )
-        await message.answer("Посоветовать фильм?", reply_markup=keyboard)
+        await message.answer("Посоветовать фильм?", reply_markup=start_keyboard())
 
 
 @dp.message(F.text.casefold() == "поехали")
