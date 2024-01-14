@@ -2,7 +2,14 @@ from aiogram import Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import KeyboardButton, Message, ReplyKeyboardMarkup
+from aiogram.types import Message
+from keyboards.data import (
+    age_select_keyboard,
+    gender_select_keyboard,
+    income_select_keyboard,
+    kids_select_keyboard,
+)
+from keyboards.general import start_keyboard
 from utils.db import set_age, set_income, set_kids, set_sex
 
 
@@ -19,81 +26,42 @@ class User(StatesGroup):
 
 @router.message(StateFilter(User.age))
 async def age(message: Message, state: FSMContext):
-    buttons = [
-        [
-            KeyboardButton(text="18-24"),
-            KeyboardButton(text="25-34"),
-            KeyboardButton(text="35-44"),
-            KeyboardButton(text="45-54"),
-            KeyboardButton(text="55-64"),
-            KeyboardButton(text="65+"),
-            KeyboardButton(text="Не отвечать"),
-        ]
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
     await state.set_state(User.income)
-    await message.answer("Укажите возраст", reply_markup=keyboard)
+    await message.answer("Укажите возраст", reply_markup=age_select_keyboard())
 
 
 @router.message(StateFilter(User.income))
 async def income(message: Message, state: FSMContext):
+
     set_age(message.from_user.id, message.text.lower())
-    buttons = [
-        [
-            KeyboardButton(text="0-20к"),
-            KeyboardButton(text="20-40к"),
-            KeyboardButton(text="40-60к"),
-            KeyboardButton(text="60-90к"),
-            KeyboardButton(text="90-150к"),
-            KeyboardButton(text="150к+"),
-            KeyboardButton(text="Не отвечать"),
-        ]
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
     await state.set_state(User.sex)
-    await message.answer("Укажите доход", reply_markup=keyboard)
+    await message.answer("Укажите доход", reply_markup=income_select_keyboard())
 
 
 @router.message(StateFilter(User.sex))
 async def sex(message: Message, state: FSMContext):
+
     set_income(message.from_user.id, message.text.lower())
-    buttons = [
-        [
-            KeyboardButton(text="м"),
-            KeyboardButton(text="ж"),
-            KeyboardButton(text="Не отвечать"),
-        ]
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
     await state.set_state(User.kids)
-    await message.answer("Укажите пол", reply_markup=keyboard)
+    await message.answer("Укажите пол", reply_markup=gender_select_keyboard())
 
 
 @router.message(StateFilter(User.kids))
 async def kids(message: Message, state: FSMContext):
     set_sex(message.from_user.id, message.text.lower())
-    buttons = [
-        [
-            KeyboardButton(text="Да"),
-            KeyboardButton(text="Нет"),
-            KeyboardButton(text="Не отвечать"),
-        ]
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
     await state.set_state(User.user_filled)
-    await message.answer("Есть ли у вас дети?", reply_markup=keyboard)
+    await message.answer("Есть ли у вас дети?", reply_markup=kids_select_keyboard())
 
 
 @router.message(StateFilter(User.user_filled))
 async def finish_user_data(message: Message, state: FSMContext):
     set_kids(message.from_user.id, message.text.lower())
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="Поехали")]], resize_keyboard=True
-    )
 
-    await message.answer("Спасибо, теперь можно перейти к фильмам", reply_markup=keyboard)
+    await message.answer(
+        "Спасибо, теперь можно перейти к фильмам", reply_markup=start_keyboard()
+    )
     await state.clear()

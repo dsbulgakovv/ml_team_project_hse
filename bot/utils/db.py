@@ -1,3 +1,9 @@
+from constraints.user_data import (
+    ages_mapping,
+    genders_mapping,
+    incomes_mapping,
+    kids_mapping,
+)
 from sqlalchemy import create_engine, text
 
 
@@ -27,61 +33,42 @@ def add_user(id):
 
 
 def set_age(id, age):
-    ages = {
-        "18-24": "age_18_24",
-        "25-34": "age_25-34",
-        "35-44": "age_35-44",
-        "45-54": "age_18_24",
-        "55-64": "age_45-54",
-        "65+": "age_65_inf",
-    }
-    if age in ages.keys():
+    if age in ages_mapping.keys():
         with create_engine(engine_string, echo=True).connect() as connection:
             connection.execute(
-                text(f"UPDATE users SET age='{ages.get(age)}' where user_id={id}")
+                text(f"UPDATE users SET age='{ages_mapping.get(age)}' where user_id={id}")
             )
             connection.commit()
 
 
 def set_income(id, income):
-    incomes = {
-        "0-20к": "income_0_20",
-        "20-40к": "income_20_40",
-        "40-60к": "income_40_60",
-        "60-90к": "income_60_90",
-        "90-150к": "income_90_150",
-        "150к+": "income_150_inf",
-    }
-    if income in incomes.keys():
+    if income in incomes_mapping.keys():
         with create_engine(engine_string, echo=True).connect() as connection:
             connection.execute(
                 text(
-                    f"UPDATE users SET income='{incomes.get(income)}' where user_id={id}"
+                    f"UPDATE users SET income='{incomes_mapping.get(income)}' where user_id={id}"
                 )
             )
             connection.commit()
 
 
 def set_sex(id, sex):
-    sexes = {
-        "м": 0,
-        "ж": 1,
-    }
-    if sex in sexes.keys():
+    if sex in genders_mapping.keys():
         with create_engine(engine_string, echo=True).connect() as connection:
             connection.execute(
-                text(f"UPDATE users SET sex={sexes.get(sex)} where user_id={id}")
+                text(
+                    f"UPDATE users SET sex={genders_mapping.get(sex)} where user_id={id}"
+                )
             )
             connection.commit()
 
 
 def set_kids(id, kids):
-    kid_mapping = {"да": 1, "нет": 0}
-    if kids in kid_mapping.keys():
+    if kids in kids_mapping.keys():
         with create_engine(engine_string, echo=True).connect() as connection:
             connection.execute(
                 text(
-                    f"UPDATE users SET kids_flg={kid_mapping.get(kids)} where user_id={id}"
+                    f"UPDATE users SET kids_flg={kids_mapping.get(kids)} where user_id={id}"
                 )
             )
             connection.commit()
@@ -98,3 +85,13 @@ def is_user_filled(id):
         if result:
             return True
         return False
+
+
+def get_movie_data(movie_id):
+    with create_engine(engine_string, echo=True).connect() as connection:
+        results = connection.execute(
+            text(
+                f"SELECT title, CAST(release_year as INTEGER), countries, genres, description FROM items where item_id={movie_id}"
+            )
+        ).fetchall()
+        return results[0]

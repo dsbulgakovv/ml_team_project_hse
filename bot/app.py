@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import sys
 
 from aiogram import Bot, Dispatcher, F, Router, types
@@ -10,16 +11,16 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.markdown import hbold
 from handlers import recommend, user_info
-from handlers.recommend import Recommendation
 from handlers.user_info import User
-from utils.db import check_user, is_user_filled
+from keyboards.data import share_data_keyboard
+from keyboards.general import start_keyboard
+from utils.db import check_user
 
 
-TOKEN = "token"  # TODO унести отсюда
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 dp = Dispatcher()
-
-user_data = {}
+dp["user_data"] = {}
 
 router = Router()
 
@@ -29,37 +30,32 @@ class Form(StatesGroup):
 
 
 @dp.message(CommandStart())
-async def command_start_handler(message: types.Message, state: FSMContext) -> None:
+async def command_start_handler(
+    message: types.Message, state: FSMContext, user_data: dict
+) -> None:
     """Наполняем данные о пользователе если он новый, иначе сразу предлагаем фильм"""
 
     await message.answer(f"Привет, {hbold(message.from_user.full_name)}!")
-    new_user = check_user(message.from_user.id)
-    if new_user:
-        buttons = [[KeyboardButton(text="Да"), KeyboardButton(text="Почему бы и нет")]]
-        keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
-        await message.answer("Поделитесь данными о себе", reply_markup=keyboard)
+    is_new_user = check_user(message.from_user.id)
+    user_data[message.from_user.id] = {}
+    if is_new_user:
+        await message.answer(
+            "Поделитесь данными о себе", reply_markup=share_data_keyboard()
+        )
         await state.set_state(User.age)
     else:
-        await state.set_state(Recommendation.popular)
-        keyboard = ReplyKeyboardMarkup(
-            keyboard=[[KeyboardButton(text="Поехали")]], resize_keyboard=True
-        )
-        await message.answer("Посоветовать фильм?", reply_markup=keyboard)
+        await message.answer("Посоветовать фильм?", reply_markup=start_keyboard())
 
 
 @dp.message(F.text.casefold() == "поехали")
-async def start_recommendations(message: types.Message, state: FSMContext) -> None:
+async def start_recommendations(message: types.Message) -> None:
     """Проверяем заполнены ли у пользователя данные в БД и от этого решаем что показать"""
 
-    filled = is_user_filled(message.from_user.id)
-    if filled:
-        await state.set_state(Recommendation.popular)
-    else:
-        await state.set_state(Recommendation.popular)
-
-    buttons = [[KeyboardButton(text="Посоветуй фильм")]]
+    buttons = [
+        [KeyboardButton(text="Просто фильм"), KeyboardButton(text="Похожие пользователи")]
+    ]
     keyboard = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
-    await message.answer("Что делаем?", reply_markup=keyboard)
+    await message.answer("Что показать?", reply_markup=keyboard)
 
 
 async def main() -> None:

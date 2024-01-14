@@ -14,7 +14,7 @@ RUN poetry config installer.max-workers 10
 RUN poetry install --no-interaction --no-ansi --no-root --without bot,recsys,dev
 
 COPY ./.dvc /app/.dvc
-COPY ./data.dvc ./trained_models.dvc /app/
+COPY ./data.dvc /app/
 RUN dvc pull data
 
 

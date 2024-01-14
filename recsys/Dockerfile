@@ -11,9 +11,11 @@ WORKDIR /recsys
 COPY pyproject.toml poetry.lock /recsys/
 RUN poetry config installer.max-workers 10
 RUN poetry install --no-interaction --no-ansi --without bot,db,dev
+RUN poetry run python -m pip install --no-use-pep517 --no-binary :all: lightfm
+
 
 COPY ./.dvc /recsys/.dvc
-COPY ./data.dvc ./trained_models.dvc /recsys/
+COPY ./data.dvc ./artifacts.dvc /recsys/
 
 COPY ./recsys /recsys/
 
