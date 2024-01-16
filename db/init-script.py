@@ -48,6 +48,13 @@ def main(cfg):
     )
     log.info("Successfully loaded!")
 
+    log.info(f"Loading file '{cfg.data.filenames.links}' to the database...")
+    df_links = pd.read_csv(cfg.data.dir_path + cfg.data.filenames.links, sep="|")
+    df_links.to_sql(
+        name=cfg.db.tables.links, con=engine, index=False, if_exists="replace"
+    )
+    log.info("Successfully loaded!")
+
 
 if __name__ == "__main__":
     main()

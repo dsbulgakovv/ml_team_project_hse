@@ -33,3 +33,9 @@ CREATE TABLE interactions (
 	total_dur INTEGER,
 	watched_pct DECIMAL(3,1)
 );
+
+CREATE TABLE links (
+    id SERIAL PRIMARY KEY,
+    item_id INTEGER,
+	img_link VARCHAR (32000)
+);
