@@ -1,3 +1,4 @@
+from constraints.sample_img import sample_img
 from constraints.user_data import (
     ages_mapping,
     genders_mapping,
@@ -95,3 +96,14 @@ def get_movie_data(movie_id):
             )
         ).fetchall()
         return results[0]
+
+
+def get_movie_image(movie_id):
+    with create_engine(engine_string, echo=True).connect() as connection:
+        try:
+            results = connection.execute(
+                text(f"SELECT img_link FROM links WHERE item_id={movie_id}")
+            ).fetchall()
+            return results[0]
+        except IndexError:
+            return [sample_img]
