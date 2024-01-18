@@ -1,19 +1,21 @@
+from base64 import b64decode
+
 from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message, ReplyKeyboardRemove, URLInputFile
+from aiogram.types import BufferedInputFile, Message, ReplyKeyboardRemove
 from keyboards.data import (
     content_type_keyboard,
     edit_preferences_keyboard,
     genres_keyboard,
 )
 from keyboards.movies import movies_keyboard, show_movies_keyboard
-from utils.db import get_movie_data
+from utils.db import get_movie_data, get_movie_image
 from utils.recsys_api import RecsysAPI
 
 
-markup_text = "<b>Фильм:</b> {}\n\nГод выпуска: {}\nСтрана: {}\nЖанр: {}\n\n\n{}"
+markup_text = "<b>{}</b>\n\nГод выпуска: {}\nСтрана: {}\nЖанр: {}\n\n\n{}"
 
 router = Router()
 api = RecsysAPI()
@@ -115,11 +117,13 @@ async def popular(message: Message, state: FSMContext, user_data: dict):
         movie = user_data[message.from_user.id]["popular"].pop(0)
         user_data[message.from_user.id]["last_movie"] = movie
         movie_data = get_movie_data(movie)
-        url = URLInputFile(
-            "https://prionta.com/upload/iblock/436/4367c8c34bcce0fdf1df3e95744a96f3.png"
-        )
+        image_data = get_movie_image(movie)
+        base64_image_data = image_data[0].split(",")[1]
+        image_bytes = b64decode(base64_image_data)
         await message.answer_photo(
-            url, caption=markup_text.format(*movie_data), reply_markup=movies_keyboard()
+            photo=BufferedInputFile(image_bytes, "poster.png"),
+            caption=markup_text.format(*movie_data),
+            reply_markup=movies_keyboard(),
         )
 
 
@@ -140,8 +144,13 @@ async def user_to_user(message: Message, state: FSMContext, user_data: dict):
         movie = user_data[message.from_user.id]["user_to_user"]["movies"].pop(0)
         user_data[message.from_user.id]["last_movie"] = movie
         movie_data = get_movie_data(movie)
-        await message.answer(
-            markup_text.format(*movie_data), reply_markup=movies_keyboard()
+        image_data = get_movie_image(movie)
+        base64_image_data = image_data[0].split(",")[1]
+        image_bytes = b64decode(base64_image_data)
+        await message.answer_photo(
+            photo=BufferedInputFile(image_bytes, "poster.png"),
+            caption=markup_text.format(*movie_data),
+            reply_markup=movies_keyboard(),
         )
 
 
@@ -163,6 +172,11 @@ async def similar_movie(message: Message, state: FSMContext, user_data: dict):
         movie = user_data[message.from_user.id]["similar_movies"].pop(0)
         user_data[message.from_user.id]["last_movie"] = movie
         movie_data = get_movie_data(movie)
-        await message.answer(
-            markup_text.format(*movie_data), reply_markup=movies_keyboard()
+        image_data = get_movie_image(movie)
+        base64_image_data = image_data[0].split(",")[1]
+        image_bytes = b64decode(base64_image_data)
+        await message.answer_photo(
+            photo=BufferedInputFile(image_bytes, "poster.png"),
+            caption=markup_text.format(*movie_data),
+            reply_markup=movies_keyboard(),
         )

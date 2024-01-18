@@ -9,6 +9,7 @@ db:
         users: "users"
         items: "items"
         interactions: "interactions"
+        links: "links"
 
 data:
     dir_path: "data/"
@@ -16,3 +17,4 @@ data:
         users: "users.csv"
         items: "items.csv"
         interactions: "interactions.csv"
+        links: "links.csv"
