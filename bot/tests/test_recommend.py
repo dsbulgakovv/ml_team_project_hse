@@ -80,7 +80,7 @@ async def test_set_content_type():
 async def test_set_genre():
     request = MockedBot(MessageHandler(set_genre, state=UserToUserGroup.genre))
     calls = await request.query(
-        message=MESSAGE.as_object(text="Фильм"),
+        message=MESSAGE.as_object(text="Ужасы"),
         user_data={12345678: {"user_to_user": {}}},
     )
 
