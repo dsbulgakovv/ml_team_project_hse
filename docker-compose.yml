@@ -14,6 +14,13 @@ services:
     networks:
       - pg-network
 
+  redis:
+    image: redis:latest
+    container_name: redis_app
+    command: --port 5370
+    expose:
+      - 5370
+
 
   init_db:
     build:
@@ -50,6 +57,7 @@ services:
       dockerfile: recsys/Dockerfile
     links:
       - postgres
+      - redis
     ports:
       - "8000:8000"
       - "55051:55051"
@@ -57,6 +65,8 @@ services:
       - "50051"
     networks:
       - pg-network
+    env_file:
+      - .env
 
 
 networks:

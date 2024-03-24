@@ -1,15 +1,11 @@
 import pickle
 
 import pandas as pd
+from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 from sqlalchemy import create_engine, text
 
 
-dbname = "test"
-user = "admin"
-password = "admin"
-host = "postgres"
-port = "5432"  # TODO в конфиг
-engine_string = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
+engine_string = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
 def get_pickle_artefact(file_path: str):
