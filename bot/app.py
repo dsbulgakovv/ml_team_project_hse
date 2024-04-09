@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import sys
 
 from aiogram import Bot, Dispatcher, F, Router, types
@@ -10,14 +9,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.markdown import hbold
+from config import TOKEN
 from handlers import recommend, user_info
 from handlers.user_info import User
 from keyboards.data import share_data_keyboard
 from keyboards.general import start_keyboard
 from utils.db import check_user
 
-
-TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 dp = Dispatcher()
 dp["user_data"] = {}

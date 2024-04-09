@@ -2,25 +2,41 @@ version: '3'
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: test
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASS
+      PGUSER: $DB_USER
     ports:
       - "5432:5432"
     volumes:
       - ./db/create_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./pgdata:/var/lib/postgresql/data
     networks:
       - pg-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $$DB_NAME -U $$DB_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  redis:
+    image: redis:latest
+    container_name: redis_app
+    command: --port 5370
+    expose:
+      - 5370
 
   init_db:
     build:
       context: .
       dockerfile: db/Dockerfile
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     links:
       - postgres
     networks:
@@ -32,7 +48,8 @@ services:
       context: .
       dockerfile: bot/Dockerfile
     depends_on:
-      - postgres
+      recsys-service:
+        condition: service_started
     links:
       - postgres
       - recsys-service
@@ -48,8 +65,12 @@ services:
     build:
       context: .
       dockerfile: recsys/Dockerfile
+    depends_on:
+      init_db:
+        condition: service_completed_successfully
     links:
       - postgres
+      - redis
     ports:
       - "8000:8000"
       - "55051:55051"
@@ -57,6 +78,8 @@ services:
       - "50051"
     networks:
       - pg-network
+    env_file:
+      - .env
 
 
 networks:

@@ -8,6 +8,13 @@ from .utils import (
 )
 
 
+knn = get_pickle_artefact("artifacts/user_to_user/model_user_to_user_39.pkl")
+encoder = get_pickle_artefact("artifacts/user_to_user/encoder_user_to_user_39.pkl")
+prepaid_data = get_prepaid_data(
+    "artifacts/user_to_user/data_for_rec_model_user_to_user.csv"
+)
+
+
 def pipline_user_to_user(user_id: int, genre_input: str, content_type_input: str) -> list:
     """Func get user id, user choise, path to project (optional), return top 10 content
 
@@ -19,16 +26,8 @@ def pipline_user_to_user(user_id: int, genre_input: str, content_type_input: str
 
     return: list with top 10 films for user
     """
-    # 1. load data & model & encoder
-    knn = get_pickle_artefact("artifacts/user_to_user/model_user_to_user_39.pkl")
 
-    encoder = get_pickle_artefact("artifacts/user_to_user/encoder_user_to_user_39.pkl")
-
-    prepaid_data = get_prepaid_data(
-        "artifacts/user_to_user/data_for_rec_model_user_to_user.csv"
-    )
-
-    # 2. SELECT to DB and get user infi
+    # 1. SELECT to DB and get user infi
     data_user = get_user_data_db(user_id)
 
     age = data_user[1]
@@ -36,15 +35,15 @@ def pipline_user_to_user(user_id: int, genre_input: str, content_type_input: str
     sex = data_user[3]
     kids_flg = int(data_user[4])
 
-    # 3. prepaid user_data
+    # 2. prepaid user_data
     user_data = prepaid_user_data_u2u(encoder, age, income, sex, kids_flg)
 
-    # 4. prepaid best film for user
+    # 3. prepaid best film for user
     best_films_for_user = data_find_best_content_u2u(
         user_data, prepaid_data, knn, genre_input, content_type_input
     )
 
-    # 5. prepaid top 10 films
+    # 4. prepaid top 10 films
     top_10_films = show_10_recommendations_for_user(best_films_for_user)
 
     return top_10_films
